@@ -1,0 +1,92 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="mooc-display.html">
+
+<link href="../bower_components/core-meta/core-meta.html" rel="import">
+<link href="../bower_components/core-transition/core-transition.html" rel="import">
+<link href="../bower_components/core-transition/core-transition-css.html" rel="import">
+<link href="../bower_components/core-transition/core-transition-overlay.css" rel="import">
+<link rel="import" href="../bower_components/core-item/core-item.html">
+
+
+<polymer-element name="moocs-list" attributes="displayed moocs_data get_close_moocs">
+
+  <template>
+
+    <style>
+      #moocs_answer_intro{
+        margin-bottom: 0px;
+        text-align: center;
+        background-color: #E5E5E5;
+        padding-top: 40px;
+        color: #607D8B;
+      }
+    .answer_moocs{
+      padding-top: 30px;
+      width:100%;
+      min-width: 720px;
+      background-color: #E5E5E5;
+    }
+    #moocs_answer_explanation{
+      width:666px;
+      margin-top: 30px;
+      margin-bottom: 40px;
+      text-align: center;
+      font-size: 19px;
+      font-weight: 500;
+      padding-left:50%;
+      margin-left: -333px;
+    }
+    </style>
+
+    <div id="animation">
+
+      <h2 id="moocs_answer_intro">We found some MOOCs for you!</h2>
+      <div id="moocs_answer_explanation">Those are the {{moocs_data.length}} best matches for your query. Check the score to see how close the courses match what you are looking for, the closer to one the better.</div>
+
+      <div class="answer_moocs" self-center horizontal layout around-justified wrap>
+
+        <template repeat="{{mooc, i in moocs_data}}">
+          <mooc-display mooc_data="{{moocs_data[i]}}" get_close_moocs="{{get_close_moocs}}"></mooc-display>
+        </template>
+
+      </div>
+
+    </div>
+    
+  </template>
+
+  <script>
+    Polymer({
+      displayed : false,
+      state: {
+        opened: true
+      },
+      ready: function(){
+        // Get the core-transition
+        if (transition) {
+          transition.teardown(this.$.animation);
+        }
+
+        var meta = document.createElement('core-meta');
+        meta.type = 'transition';
+        var transition = meta.byId('core-transition-fade');
+        transition.setup(this.$.animation);
+
+        // Run the animation
+        this.transition = transition;
+      },
+      displayedChanged: function() {
+        if(this.displayed == true){
+          this.transition.go(this.$.animation, this.state);
+        }
+      },
+      created: function(){
+        this.moocs_data = [{},{},{},{},{},{}];
+      }
+    });
+  </script>
+
+</polymer-element>
+

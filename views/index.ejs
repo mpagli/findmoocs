@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FindMoocs.net</title>
+
+  <script src="/bower_components/webcomponentsjs/webcomponents.js"></script>
+  
+  <link rel="import" href="/bower_components/core-icons/core-icons.html">
+  <link rel="import" href="/bower_components/core-icons/editor-icons.html">
+  <link rel="import" href="/images/custom-icons.html">
+  <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+
+  <link rel="import" href="/bower_components/font-roboto/roboto.html">
+
+  <link rel="import" href="/bower_components/paper-elements/paper-elements.html">
+  <link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
+  <link rel="import" href="/bower_components/core-toolbar/core-toolbar.html">
+  <link rel="import" href="/bower_components/core-header-panel/core-header-panel.html">
+  <link rel="import" href="/bower_components/core-media-query/core-media-query.html">
+
+  <link rel="import" href="/bower_components/paper-shadow/paper-shadow.html">
+
+  <link rel="import" href="/bower_components/paper-fab/paper-fab.html">
+
+  <link rel="import" href="/bower_components/core-animated-pages/core-animated-pages.html">
+  <link rel="import" href="/bower_components/core-animated-pages/transitions/slide-from-right.html">
+
+  <link rel="import" href="/bower_components/paper-input/paper-input.html">
+  <link rel="import" href="/bower_components/paper-input/paper-input-decorator.html">
+  <link rel="import" href="/bower_components/paper-input/paper-autogrow-textarea.html">
+  <link rel="import" href="/bower_components/paper-input/paper-char-counter.html">
+
+  <link rel="import" href="/bower_components/paper-toast/paper-toast.html">
+
+  <link rel="import" href="/bower_components/paper-button/paper-button.html">
+
+  <link rel="import" href="/bower_components/paper-slider/paper-slider.html">
+
+  <link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+  <link rel="import" href="/bower_components/paper-item/paper-item.html">
+  <link rel="import" href="/bower_components/core-menu/core-menu.html">
+
+  <link rel="import" href="/bower_components/core-transition/core-transition-css.html">
+  <link rel="import" href="/bower_components/core-overlay/core-overlay.html">
+
+  <link rel="import" href="/views/mooc-display.html">
+
+  <link rel="import" href="/bower_components/flatiron-director/flatiron-director.html">
+
+  <link href='http://fonts.googleapis.com/css?family=Rajdhani' rel='stylesheet' type='text/css'>
+
+  <link rel="import" href="/views/moocs-list.html">
+
+  <link rel="stylesheet" href="/stylesheets/style.css">
+
+  <link rel="import" href="/bower_components/core-ajax/core-ajax.html">
+
+  <link rel="import" href="/bower_components/paper-progress/paper-progress.html">
+
+  <link rel="import" href="/bower_components/core-icons/social-icons.html">
+
+  <!-- Style requiring shim-shadowdom -->
+  <style shim-shadowdom>
+
+    paper-tabs::shadow #selectionBar {
+      background-color: #FF6E40;
+    }
+
+    .custom /deep/ .focused-underline {
+      background-color: #FF6E40;
+    }
+
+    .custom /deep/ .unfocused-underline {
+      background-color: #607D8B;
+    }
+
+    paper-slider::shadow #sliderKnobInner,
+    paper-slider::shadow #sliderKnobInner::before,
+    paper-slider::shadow #sliderBar::shadow #activeProgress {
+      background-color: #FF6E40;
+    }
+
+    paper-progress::shadow #activeProgress {
+      background-color: #FF6E40;
+    }
+
+    core-header-panel::shadow #mainContainer{
+      overflow-x:visible;
+      overflow-y:visible  ;
+    }
+
+  </style>
+
+</head>
+<body unresolved fullbleed>
+<template is="auto-binding" id="t">
+
+<!-- Routing -->
+<flatiron-director route="{{selected}}" autoHash></flatiron-director>
+
+<!-- HEADER PANEL -->
+<div vertical layout justified style="min-height:100.1%">
+
+  <core-header-panel>
+
+    <paper-shadow z="1">
+      <core-toolbar horizontal layout flex center-center class="medium-tall">
+        <div class="headline">
+          <div horizontal layout flex center class="headline_text">
+            <img src="/images/title_1.svg">
+            <br>
+            <span class="catchphrase">Find the MOOCs you need !</span>
+          </div>
+        </div>
+      </core-toolbar>
+    </paper-shadow>
+
+    <paper-shadow z="1">
+      <div class="bottom" flex>
+        <paper-tabs id="paper_tabs" selected="{{selected}}" valueattr="hash" noink style="width: 25%; min-width: 400px">
+
+          <template repeat="{{section, i in sections}}">  
+            <paper-tab hash="{{sections[i].hash}}">{{section.name}}</paper-tab>
+          </template>
+          
+        </paper-tabs>
+
+        <div horizontal layout class="btn_div">
+          <div id="doge_btn" style="margin-right:15px">
+            <paper-fab class="github_btn" icon="custom-icons:github" title="Check this project on github" on-tap="{{openGithubTab}}"></paper-fab>
+          </div>
+          <!-- Share button -->
+          <div vertical layout center id="share_menu">
+            <paper-fab id="share_btn" icon="social:share" title="Share"></paper-fab>
+            <paper-fab id="share_fb_btn" icon="custom-icons:fb" title="Share on facebook" on-tap="{{shareOnFb}}" mini></paper-fab>
+            <paper-fab id="share_twitter_btn" icon="custom-icons:twitter" title="Share on twitter" on-tap="{{shareOnTwitter}}" mini></paper-fab>
+          </div>
+        </div>        
+        
+      </div>
+    </paper-shadow>
+
+  </core-header-panel>
+
+  <!-- TOP PAGES -->
+  <div layout horizontal center-justified style="min-height:550px;background-color:white;">
+
+    <core-animated-pages selected="{{selected}}" valueattr="hash" transitions="slide-from-right">
+
+      <section layout vertical hash="{{sections[0].hash}}">
+        <div style="margin-right:40px;margin-left:40px;margin-top:20px;">
+          <h2>Search from text</h2>
+          <div layout horizontal center-center style="margin-right:2em">
+            <div class="icon_page">
+              <core-icon class="icon_page" icon="custom-icons:translate"></core-icon>
+            </div>
+            <p flex style="margin-left:1em;text-align:justify;">You need to understand some technical text for a project but it sounds like Chinese? You would like to query the web and find some answers but you don't even know what question to ask? You're in the right place, findmoocs.net allows you to link any technical text with a database of MOOCs that suit your needs!</p>
+          </div>
+          <div layout horizontal center-center style="margin-right:2em">
+            <div class="icon_page">
+              <core-icon class="icon_page" icon="custom-icons:up"></core-icon>
+            </div>
+            <p flex style="margin-left:1em;text-align:justify;">Stop querying the net erratically and build up real and valuable knowledge that focus on what you need to learn. Drop some technical text you would like to understand in the field bellow:</p>
+          </div>
+        </div>
+      
+        <div self-center style="width:80%;height:10em;">
+          <paper-input-decorator floatingLabel="true" class="custom" label="Copy here the piece of knowlege you would like to master" style="max-height:10em;">
+            <paper-autogrow-textarea rows="7" max-rows="7" style="max-height:8.5em;">
+              <textarea style="background-color:#FAFAFA;" id="text_area" maxlength="2000"></textarea>
+            </paper-autogrow-textarea>
+          </paper-input-decorator>
+
+        </div>
+
+        <div self-center style="margin:40px">
+          <paper-button raised on-tap="{{btnText_clickAction}}">find moocs !</paper-button>
+        </div>
+      </section>
+
+      <section vertical layout hash="{{sections[1].hash}}">
+        <div vertical layout style="margin-right:40px;margin-left:40px;margin-top:20px;">
+          <h2>Search from topics</h2>
+          <div layout horizontal center-center style="margin-right:2em">
+            <div class="icon_page">
+              <core-icon icon="editor:insert-chart" class="icon_page"></core-icon>
+            </div>
+            <p flex style="margin-left:1em;text-align: justify;">Find moocs associated to some specific topics. Build your dream mooc choosing among several topics. You can select up to 4 topics.</p>
+          </div>
+          <div style="width:640px" self-center>
+            <div center horizontal layout style="margin-left:30px;font-weight:300;">
+              <div>Topic 1</div>
+              <paper-slider value="{{topicsValue[0]}}"></paper-slider>
+              <paper-dropdown-menu label="Choose a topic">
+                  <paper-dropdown class="dropdown" layered>
+                      <core-menu class="menu" selected="{{topicSelected[0]}}">
+                          <template repeat="{{topic, i in topics}}"> 
+                            <paper-item>{{topic.name}}</paper-item>
+                          </template>
+                      </core-menu>
+                  </paper-dropdown>
+              </paper-dropdown-menu>
+            </div>
+            <div center horizontal layout style="margin-left:30px">
+              <div>Topic 2</div>
+              <paper-slider value="{{topicsValue[1]}}"></paper-slider>
+              <paper-dropdown-menu label="Choose a topic">
+                  <paper-dropdown class="dropdown" layered>
+                      <core-menu class="menu" selected="{{topicSelected[1]}}">
+                          <template repeat="{{topic, i in topics}}"> 
+                            <paper-item>{{topic.name}}</paper-item>
+                          </template>
+                      </core-menu>
+                  </paper-dropdown>
+              </paper-dropdown-menu>
+            </div>
+            <div center horizontal layout style="margin-left:30px">
+              <div>Topic 3</div>
+              <paper-slider value="{{topicsValue[2]}}"></paper-slider>
+              <paper-dropdown-menu label="Choose a topic">
+                  <paper-dropdown class="dropdown" layered>
+                      <core-menu class="menu" selected="{{topicSelected[2]}}">
+                          <template repeat="{{topic, i in topics}}"> 
+                            <paper-item>{{topic.name}}</paper-item>
+                          </template>
+                      </core-menu>
+                  </paper-dropdown>
+              </paper-dropdown-menu>
+            </div>
+            <div center horizontal layout style="margin-left:30px;">
+              <div>Topic 4</div>
+              <paper-slider value="{{topicsValue[3]}}"></paper-slider>
+              <paper-dropdown-menu label="Choose a topic">
+                  <paper-dropdown class="dropdown" layered>
+                      <core-menu class="menu" selected="{{topicSelected[3]}}">
+                          <template repeat="{{topic, i in topics}}"> 
+                            <paper-item>{{topic.name}}</paper-item>
+                          </template>
+                      </core-menu>
+                  </paper-dropdown>
+              </paper-dropdown-menu>
+            </div>
+          </div>
+        </div>
+
+        <div self-center style="margin:40px">
+          <paper-button raised on-tap="{{btnTopic_clickAction}}">find moocs !</paper-button>
+        </div>
+      </section>
+
+      <section layout vertical hash="{{sections[2].hash}}">
+        <div flex vertical layout justified style="margin-right:40px;margin-left:40px;margin-top:20px;text-align:center;">
+          <h2>About this project</h2>
+          <p>This project uses machine learning on MOOCs subtitles to extract topics. The database contains all english courses available from Coursera and Udacity.</p>
+          <div style="height:100px;margin:20px;" horizontal layout around-justified>
+            <core-icon icon="custom-icons:coursera_logo" id="coursera_logo" on-tap="{{goToCoursera}}"></core-icon>
+            <core-icon icon="custom-icons:udacity_logo" id="udacity_logo" on-tap="{{goToUdacity}}"></core-icon>
+          </div>
+          <p>You want to get involved in this project ? You imagined a feature which is missing or a way to improve the current framework ? See you on github.</p>
+          <core-icon self-center id="icon_github_big" icon="custom-icons:github" on-tap="{{openGithubTab}}"></core-icon>
+        </div>
+      </section>
+      
+    </core-animated-pages>
+
+  </div>
+
+  <!-- A div to fill the gap in between elements -->
+  <div flex></div>
+
+  <!-- QUERY ANSWER, list of MOOCs -->
+  <div vertical layout>
+    <paper-progress style="width:100%;" indeterminate?="{{isLoading}}"></paper-progress>
+  <moocs-list id="moocslist" displayed="{{moocslist_opened}}" moocs_data="{{moocs_data}}" get_close_moocs="{{moocsdata_received}}"></moocs-list>
+  </div>
+  
+  <!-- End of page -->
+  <div id="eof">
+    Made by mpagli, 2015
+  </div>
+
+
+<!-- Popup with wallet address -->
+<core-overlay opened="{{popup_opened}}" layered backdrop transition="core-transition-center">
+  <style>
+      #popupshibe{
+      background-color:white;
+      width:500px;
+      height:200px;
+      border-radius: 5px;
+      font-weight: 300;
+    }
+  </style>
+  <div id="popupshibe" vertical layout center justified>
+    <div style="margin-top:30px">Here is my wallet address, thanks!</div>
+    <div>DGzUcqDAGLoHNrvZkJPX41SSZieyLpzKFT</div>
+    <paper-button id="btnPopup" raised style="margin-bottom:30px" on-tap="{{btnPopup_clickAction}}">ok</paper-button>
+  </div>
+</core-overlay>
+
+</div>
+
+<!-- AJAX QUERIES -->
+<core-ajax  id="POST_text" 
+            method="POST"
+            url="/api/getMoocsFromText" 
+            params="{{textData}}" 
+            handleAs="json" 
+            on-core-response="{{moocsdata_received}}" 
+            loading="{{isLoading}}"></core-ajax>
+
+<core-ajax  id="POST_topics" 
+            auto="false"
+            contentType='application/json'
+            method="POST"
+            url="/api/getMoocsFromTopics"
+            body="{{topicsData}}" 
+            handleAs="json" 
+            on-core-response="{{moocsdata_received}}"  
+            loading="{{isLoading}}"></core-ajax>   
+
+<core-ajax  id="GET_topicsList" 
+            method="GET"
+            url="/api/getTopicsList"
+            handleAs="json" 
+            on-core-response="{{topicslist_received}}" ></core-ajax>   
+
+<paper-toast id="toastNoText" 
+            text="You need to enter some text in order to get a recommendation."
+            duration="5000"
+            style="font-weight:300;"></paper-toast>
+
+<<<<<<< HEAD
+<paper-toast id="toastNoTopic" 
+            text="You need to select at least one topic in order to get a recommendation."
+            duration="5000"
+            style="font-weight:300;"></paper-toast>
+
+=======
+>>>>>>> fbf75795890cb28762ef9e322c2dc8bd5ac55776
+<paper-toast id="toastEmptyAnswer" 
+            text="It seems your text was not very inspiring to our algorithm, try adding better keywords."
+            duration="5000"
+            style="font-weight:300;"></paper-toast>
+
+</template>
+
+  <script>
+
+    var template = document.querySelector('#t');
+
+    //Template variables
+    template.popup_opened = false;
+    template.textData = {text: ''};
+    template.topicsData = {};
+    template.moocslist_opened = false;
+    template.isLoading = false;
+    template.moocs_data = [];
+    template.topics = []; 
+    template.topicSelected = [-1,-1,-1,-1];
+    template.topicsValue = [50,50,50,50];
+    template.sections = [
+      {name: 'Search from text', hash: 'from-text'},
+      {name: 'Search from topics', hash: 'from-topics'},
+      {name: 'About', hash: 'about'}
+    ];
+
+    //Template methods
+    template.btnPopup_clickAction = function() {
+      template.popup_opened = false;
+    };
+    template.topicslist_received = function(e){
+      template.topics = e.detail.response;
+    };
+    template.moocsdata_received = function(e) {
+      //when the POST query return a recommendation we can display it
+      if(e.detail.response.length == 0){
+        template.$.toastEmptyAnswer.show();
+        return;
+      }
+      template.moocs_data = e.detail.response;
+      this.$.moocslist.style['height'] = 'auto';
+      template.moocslist_opened = true;
+    };
+    template.btnText_clickAction = function() {
+      //POST request: sending the text, getting the MOOCs recommendation
+      template.textData.text = this.$.text_area.value;
+      if(template.textData.text == ""){
+        template.$.toastNoText.show();
+        return;
+      }
+      this.$.POST_text.go();
+    };
+    template.btnTopic_clickAction = function(){
+      var req = [];
+      for(i in template.topicSelected){
+        var topicIdx = template.topicSelected[i];
+        if(topicIdx != -1){
+          req.push({
+            ids:template.topics[topicIdx].ids, 
+            value:template.topicsValue[i]
+          });
+        }
+      }
+<<<<<<< HEAD
+      if(req.length == 0){
+        template.$.toastNoTopic.show();
+        return;
+      }
+=======
+>>>>>>> fbf75795890cb28762ef9e322c2dc8bd5ac55776
+      template.topicsData = JSON.stringify(req)
+      console.log(template.topicsData);
+      this.$.POST_topics.go();
+    };
+    template.btnDoge_clickAction = function() {
+      template.popup_opened = true;
+    };
+    template.goToCoursera = function(){
+      var win = window.open('https://www.coursera.org/', '_blank');
+      win.focus();
+    };
+    template.goToUdacity = function(){
+      var win = window.open('https://www.udacity.com/', '_blank');
+      win.focus();
+    };
+    template.openGithubTab = function(){
+      var win = window.open('https://github.com/mpagli/findmoocs', '_blank');
+      win.focus();
+    };
+    template.shareOnTwitter = function(){
+      var win = window.open('https://twitter.com/share', '_blank');
+      win.focus();
+    };
+    template.shareOnFb = function(){
+      var win = window.open('https://www.facebook.com/sharer/sharer.php?u=findmoocs.net', '_blank');
+      win.focus();
+    };
+
+    //Initialization
+    var DEFAULT_ROUTE = 'from-text';
+
+    template.addEventListener('template-bound', function(e) {
+      this.selected =  this.selected || DEFAULT_ROUTE;
+
+      this.$.GET_topicsList.go();
+    });
+
+  </script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-63039185-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</body>
+</html>

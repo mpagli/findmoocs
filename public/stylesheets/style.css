@@ -1,0 +1,207 @@
+    body {
+      font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+      font-weight: 100;
+      margin: 0;
+      color: #333;
+      min-width: 830px;
+    }
+
+    paper-tabs {
+      color: #333;
+      margin-left: 20%;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+    }
+
+    paper-tab{
+      cursor: pointer; 
+      cursor: hand;
+    }
+
+    core-toolbar {
+      background-color: #607D8B;
+      box-shadow: none;
+      color: #fff;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    core-header-panel {
+      height: 25%;
+      min-height: 225px;
+      z-index: 1;
+    }
+
+    .bottom {
+      background-color: #CFD8DC;
+      position: relative;
+    }
+
+    .headline{
+      position: relative;
+      margin-left: 20%;
+      display: flex;
+    }
+
+    .headline_icon{
+      width: 130px;
+      height: 130px;
+    }
+
+    .headline_text{
+      margin: 15px;
+    }
+
+    .catchphrase{
+      position: absolute;
+      width: 270px;
+      font-weight: 200;
+      margin-top: 16px;
+      margin-left: -50px;
+    }
+
+    .btn_div{
+      position: absolute;
+      margin-top: -1.75em;
+      margin-left: 70%;
+    }
+
+    .github_btn{
+      background-color: #FF5722;
+    }
+
+    .doge_btn{
+      background-color: #FFA000;
+    }
+
+    core-animated-pages {
+      width: 60%;
+      min-width: 720px;
+      min-height: 500px;
+      overflow: hidden;
+      font-weight: 300;
+      z-index: 0;
+    }
+
+    core-animated-pages > * {
+      border-radius: 5px;
+      background-color: white;
+    }
+
+    #coursera_logo{
+      cursor: pointer;
+      color: #727272;
+      height: 100px;
+      width: 100px;
+      cursor: hand;
+    }
+
+    #coursera_logo:hover{
+      color: #2D4671;
+    }
+
+    #udacity_logo{
+      cursor: pointer;
+      color: #727272;
+      height: 100px;
+      width: 100px;
+      cursor: hand;
+    }
+
+    #udacity_logo:hover{
+      color:#FF6E40;
+    }
+
+    h2{
+      margin-bottom: 1em;
+      text-align: center;
+      color: #607D8B;
+    }
+
+    textarea{
+      width: 100%;
+    }
+
+    paper-slider {
+      width: 60%;
+      margin:10px;
+    }
+
+    .icon_page{
+      width:60px;
+      height:60px;
+      color:#727272;
+    }
+
+    #icon_github_big{
+      width:80px;
+      margin: 50px;
+      height:80px;
+      color:#727272;
+      cursor: pointer;
+      cursor: hand;
+    }
+
+    #icon_github_big:hover{
+      color:#A23645;
+    }
+
+    #eof{
+      width:100%;
+      font-size:0.8em;
+      text-align:center;
+      padding-top:50px;
+      padding-bottom:50px;
+      font-weight:200;
+      background-color: #E5E5E5;
+    }
+
+    #moocslist{
+       background-color:#E5E5E5;
+       height:0px;
+       overflow:hidden;
+    }
+
+    #share_btn{
+    	z-index: 2;
+    	transition: all 200ms;
+    }
+
+    #share_menu:hover #share_btn{
+    	-webkit-transform: rotate(-92deg);
+    }
+
+    #share_fb_btn{
+    	margin-top: -45px;
+    	background-color: #3b5998;
+    	transition: all 200ms;
+    }
+
+    #share_twitter_btn{
+    	margin-top: -45px;
+    	background-color: #4099FF;
+    	transition: all 200ms;
+    }
+
+    #share_menu:hover #share_fb_btn{
+    	margin-top: 10px;
+    }
+
+    #share_menu:hover #share_twitter_btn{
+    	margin-top: 10px;
+    }
+
+    @media only screen and (max-width: 1000px){
+      core-animated-pages {
+        width: 80%;
+      }
+    }
+
+    @media only screen and (max-width: 550px){
+      paper-tabs {
+        margin-left: 10%;
+      }
+    }

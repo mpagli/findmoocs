@@ -1,0 +1,199 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+
+<link href='http://fonts.googleapis.com/css?family=Rajdhani' rel='stylesheet' type='text/css'>
+
+<polymer-element name="mooc-display" attributes="mooc_data get_close_moocs">
+  <template>
+
+    <style>
+      .outer_frame{
+        margin:20px;
+        margin-bottom: 70px;
+      }
+      .main_display{
+        background-color:white;
+        height:689px;
+        width:460px;
+        border-radius: 5px;
+      }
+      #image_header {
+        width:460px;
+        height:259px;
+        background-image: url('http://lorempixel.com/460/259/');
+        background-size: 460px 259px;
+      }
+      #course_title{
+        text-align: center;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 18px;
+      }
+      #description_frame{
+        height: 200px;
+      }
+      #course_description{
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 10px;
+        font-weight: 300;
+        text-align: justify;
+      }
+      #affiliates{
+        height: 160px;
+        color: #727272;
+        padding:20px;
+        padding-top: 10px;
+        font-weight: 300;
+        background-color: #F5F5F5;
+      }
+      img{
+        margin:5px;
+        margin-top: 25px;
+      }
+      #check_it_btn{
+        position: absolute;
+        margin-top: -28px;
+        margin-left: 305px;
+      }
+      #findClose_btn{
+        background-color: #FFA000;
+      }
+      #check_btn{
+        background-color: #FF5722;
+      }
+      #score_display{
+        font-weight: 400;
+        font-family: 'Rajdhani', sans-serif;
+        margin-left: 20px;
+        margin-top: 22px; 
+      }
+      .hover_effect_visible{
+        position:absolute;
+        margin-top:-689px;
+        background-color:black;
+        opacity:0.1;
+        height:689px;
+        width:460px;
+        visibility: visible;
+        transition: all 200ms;
+      }
+      .hover_effect_hidden{
+        position:absolute;
+        margin-top:-689px;
+        background-color:black;
+        opacity:0.0;
+        height:689px;
+        width:460px;
+        visibility: hidden;
+        transition: all 200ms;
+      }
+
+    </style>
+
+    <div class="outer_frame">
+      <paper-shadow z="{{z}}" id="paper_shadow">
+        <div class="main_display" vertical layout on-mouseleave="{{mouseoutAction}}">
+          <div style="height:50px;background-color:#CFD8DC;" horizontal layout center-center>
+            <div id="course_title">{{mooc_data.title}}</div>
+          </div>
+          <div id="image_header">
+          </div>
+          <div style="position:absolute;margin-top:-40px;background-color:white;opacity:0.7;height:40px;width:460px;">
+          </div>
+          <div vertical layout style="position:absolute;margin-top:-50px">
+            <div id="score_display">matching score: {{mooc_data.score | toFixed(2)}}</div>
+          </div>
+          <div id="check_it_btn" horizontal layout >
+            <paper-fab id="findClose_btn" icon="add-box" title="find similar MOOCs" on-tap="{{getCloseMoocs_clickAction}}"></paper-fab>
+            <div style="margin-left:15px;">
+              <paper-fab id="check_btn" icon="open-in-browser" title="Check it out!" on-tap="{{openCoursePage}}" target="_blank"></paper-fab>
+            </div>
+          </div>
+          <div id="description_frame" vertical layout center-center>
+            <p id="course_description">{{mooc_data.description}}</p>
+          </div>
+          <div id="affiliates">
+            <div>Affiliate(s):</div>
+            <div flex horizontal layout center-justified>
+   
+                <img src="{{mooc_data.affiliates[0].imageURL}}" style="max-width:100px;height:auto;max-height:110px;" title="{{mooc_data.affiliates[0].name}}">
+             
+            </div>  
+          </div>
+          <div id="hover_effect" class="hover_effect_visible" on-mouseover="{{mouseoverAction}}">
+          </div>
+        </div>
+      </paper-shadow>
+    </div>
+
+
+  <core-ajax  id="POST_getCloseMoocs" 
+          method="POST"
+          url="/api/getCloseMoocs" 
+          params="{{moocId}}" 
+          handleAs="json" 
+          on-core-response="{{get_close_moocs}}"></core-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      created: function(){
+        this.mooc_data = {
+          title: 'undefined',
+          score: 'undefined',
+          courseURL: '#',
+          imageURL:  '#',
+          description: 'undefined',
+          affiliates: [],
+          source: 'undefined'
+        };
+      },
+      moocId: {
+        _id: 0
+      },
+      toFixed: function(value, precision) {
+        if (value) {
+          return Number(value).toFixed(precision);
+        }
+      },
+      domReady: function(){
+        this.$.image_header.style['background-image'] = 'url(\''+this.mooc_data.imageURL+'\')';
+        if(this.mooc_data.affiliates.length == 0){
+          if(this.mooc_data.source == 'udacity'){
+            this.mooc_data.affiliates = [{
+              imageURL:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Udacity_Logo.svg/939px-Udacity_Logo.svg.png',
+              name:'udacity'
+              }];
+          } else {
+            this.mooc_data.affiliates = [{
+              imageURL:'http://www.google.fr/url?source=imglanding&ct=img&q=http://upload.wikimedia.org/wikipedia/commons/e/e5/Coursera_logo.PNG&sa=X&ei=nOFiVcrYFIGoUou9gVg&ved=0CAkQ8wc&usg=AFQjCNEHjgFuSoUwe3YPRR0bsZXuhk6f8w',
+              name:'coursera'
+              }];
+          }
+        }
+      },
+      z : 1,
+      mouseoverAction: function() {
+        this.$.hover_effect.className = "hover_effect_hidden";
+        this.$.paper_shadow.setZ(4);
+      },
+      mouseoutAction: function() {
+        this.$.hover_effect.className = "hover_effect_visible";
+        this.$.paper_shadow.setZ(1);
+      },
+      getCloseMoocs_clickAction: function(){
+        console.log("get close moocs",this.mooc_data._id);
+        this.moocId._id = this.mooc_data._id;
+        this.$.POST_getCloseMoocs.go();
+      },
+      openCoursePage: function() {
+        var win = window.open(this.mooc_data.courseURL, '_blank');
+        win.focus();
+      }
+    });
+  </script>
+
+</polymer-element>
